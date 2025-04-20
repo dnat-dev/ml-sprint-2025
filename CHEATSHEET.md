@@ -1,186 +1,176 @@
-```markdown
-# CHEATSHEET: Your ML Handbook & Q&A
+# CHEATSHEET: Your ML Handbook & Q&A
 
-> Living reference covering NumPy, Pandas, Linear Algebra and core ML concepts—annotated with your own questions and answers.
+> A logically structured, topic-wise reference for ML and Data Science concepts, crafted from your questions and answers.
 
 ---
 
 ## Table of Contents
 
-1. [NumPy](#numpy)  
-2. [Pandas](#pandas)  
-3. [Linear Algebra](#linear-algebra)  
-4. [ML Concepts](#ml-concepts)  
+1. [Linear Algebra Essentials](#linear-algebra-essentials)
+2. [NumPy Core Operations](#numpy-core-operations)
+3. [Pandas Quick Reference](#pandas-quick-reference)
+4. [Key Machine Learning Concepts](#key-machine-learning-concepts)
 
 ---
 
-## NumPy
+## 1. Linear Algebra Essentials
 
-### Array Creation & Basics
+### Scalars vs Vectors
 
-- **Signatures**  
+- **Scalar**: Single number (e.g., learning rate `η = 0.01`).
+- **Vector**: List of numbers indicating magnitude and direction (e.g., `[3, 4]`).
+- **Numeric Vector**: Vector with numeric elements (int/float) suitable for linear algebra.
+
+### Vector Magnitude (Norms)
+
+- **L₂ (Euclidean)**:
+  \[
+  \|v\|_2 = \sqrt{\sum_i v_i^2}
+  \]
+  - Distance from the origin to vector’s tip.
+  - Preferred norm in Euclidean contexts (like K-means).
+
+- **L₁ (Manhattan)**:
+  \[
+  \|v\|_1 = \sum_i |v_i|
+  \]
+  - Sum of absolute vector components.
+
+- **L₃ Norm**:
+  \[
+  \|v\|_3 = \left(\sum_i |v_i|^3
+ight)^{1/3}
+  \]
+
+### Unit Vectors
+
+- Vector of length 1 in the direction of original vector \( v \):
   ```python
-  np.array([...])
-  np.zeros(shape)
-  np.ones(shape)
-  np.arange(start, stop, step)
+  v_hat = v / np.linalg.norm(v)
   ```
-- **Summary**  
-  Build _n_-dimensional arrays for fast numeric operations.
-- **Q & A**  
-  - **Q:** How do you vectorise a Python list?  
-    **A:** Wrap it with `np.array(my_list)`.
-
-### Norms (Lp)
-
-- **Signature**  
-  ```python
-  np.linalg.norm(x, ord=None, axis=None)
-  ```
-- **Default**  
-  - `ord=None` ⇒ L₂ norm for 1‑D arrays, Frobenius norm for matrices.
-- **Variants**  
-  - **L1 (`ord=1`)** → `sum(abs(v))`  
-  - **L2 (`ord=2`)** → `sqrt(sum(v**2))`  
-  - **L∞ (`ord=np.inf`)** → `max(abs(v))`  
-  - **Lₚ (`ord=p`)** → `(sum(abs(v)**p))**(1/p)`
-- **Q & A**  
-  - **Q:** What’s the default `ord`?  
-    **A:** L₂ for 1‑D arrays.  
-  - **Q:** Can you use `ord=3`?  
-    **A:** Yes—it computes the L₃ norm: `(∑|vᵢ|³)**(1/3)`.  
-  - **Q:** Why is L1 ≥ L2?  
-    **A:** Squaring then root‑taking shrinks sums; equality only when only one component is non‑zero.
 
 ### Dot Product & Alignment
 
-- **Formula**  
-  ```python
-  np.dot(a, b)  # sum(a[i] * b[i])
-  ```
-- **Geometric**  
+- **Dot Product Formula**:
   \[
-    a \cdot b = \|a\|\;\|b\|\;\cos\theta
+  a \cdot b = \|a\|\|b\|\cos	heta = \sum_i a_i b_i
   \]
-- **Q & A**  
-  - **Q:** What does “alignment” mean?  
-    **A:** How closely two vectors point in the same direction (positive = same, zero = orthogonal, negative = opposite).  
-  - **Q:** Is the dot product commutative (i.e. does xᵀy = yᵀx)?  
-    **A:** Yes—because ∑ aᵢbᵢ = ∑ bᵢaᵢ.  
-  - **Q:** Are dot and cross products the same?  
-    **A:** No—the dot product yields a scalar; the cross product (3D only) yields a vector perpendicular to both inputs.  
-- **Cosine Similarity**  
+
+- **Geometric meaning**:
+  - Positive dot → acute angle, vectors aligned similarly.
+  - Zero dot → orthogonal vectors (90°).
+  - Negative dot → obtuse angle, vectors pointing opposite.
+
+- **Cosine Similarity**:
   ```python
   cos_sim = np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
   ```
 
----
+- **Q & A**:
+  - **Alignment**: Measure of how closely two vectors point in the same direction, indicated by the sign of the dot product.
+  - **Dot product of different shapes**: Not possible, shapes must match.
+  - **Cosine similarity of -1**: Vectors are perfectly opposite (180° alignment).
 
-## Pandas
+### Vector Projection
 
-### Row‑wise Normalisation
-
-- **Pattern**  
-  ```python
-  df.apply(lambda row: row / np.linalg.norm(row), axis=1)
-  ```
-- **Summary**  
-  Scale each DataFrame row to unit length for distance‑based models.
-- **Q & A**  
-  - **Q:** Do you use `apply` or `transform`?  
-    **A:** Use `apply(..., axis=1)` for custom lambdas; `transform` for built‑in functions.
-
----
-
-## Linear Algebra
-
-### Scalar vs Vector
-
-- **Scalar**  
-  Single number (e.g., learning rate `η = 0.01`).
-- **Vector**  
-  Ordered list of scalars encoding magnitude + direction (e.g., `[3, 4]`).
-- **Q & A**  
-  - **Q:** What is a “numeric vector”?  
-    **A:** A vector whose components are real numbers (ints/floats), ready for linear‑algebra ops.
-
-### Magnitude (L₂ Norm)
-
-- **Formula**  
+- **Projection Formula**:
   \[
-    \|v\|_2 = \sqrt{\sum_i v_i^2}
+  	ext{proj}_v(u) = rac{u \cdot v}{v \cdot v} v
   \]
-- **Summary**  
-  Euclidean length of a vector.
-- **Q & A**  
-  - **Q:** Why prefer L₂ for k‑means?  
-    **A:** k‑means minimises squared Euclidean distances—L₂ matches that objective.
 
-### Unit Vector
+- **Scalar projection** (component of \( u \) along \( v \)):
+  \[
+  	ext{comp}_v(u) = rac{u \cdot v}{\|v\|} = \|u\|\cos	heta
+  \]
 
-- **Formula**  
-  ```python
-  v_hat = v / np.linalg.norm(v)
-  ```
-- **Summary**  
-  Direction‑only vector of length 1.
-- **Q & A**  
-  - **Q:** Is a unit vector equal to tan θ?  
-    **A:** No—its components are `[cos θ, sin θ]`; tan θ = sin θ/cos θ.
+- **Residual vector** (component perpendicular to \( v \)):
+  \[
+  r = u - 	ext{proj}_v(u)
+  \]
+
+- **Distances in projection**:
+  - Along-vector distance (scalar proj length): `||proj_v(u)||`.
+  - Perpendicular distance (residual length): `||u - proj_v(u)||`.
 
 ### Vector Addition
 
-- **Formula**  
+- **Formula**:
   \[
-    u + v = [u_i + v_i]
+  u + v = [u_i + v_i]
   \]
-- **Summary**  
-  Combine displacements head‑to‑tail.
-- **Q & A**  
-  - **Q:** What does the sum represent?  
-    **A:** Total displacement after moving by u then v.
-
-### Projection
-
-- **Formula**  
-  ```python
-  proj_v_u = (u · v / (v · v)) * v
-  ```
-- **Summary**  
-  Component of vector u along vector v’s direction.
-- **Q & A**  
-  - **Q:** How far is u from its projection onto v?  
-    **A:** It’s the norm of the residual:  
-      `||u - proj_v(u)|| = ||u|| * |sin θ|`.
+  - Geometrically: Move along \( u \), then \( v \).
 
 ---
 
-## ML Concepts
+## 2. NumPy Core Operations
+
+### Array Creation
+
+- `np.array([...])`: Vectorize lists.
+- `np.zeros(shape), np.ones(shape), np.arange(start, stop, step)`: Create numeric arrays.
+
+### Norm Computations in NumPy
+
+```python
+np.linalg.norm(x, ord=None, axis=None)
+```
+
+- Default: L₂ norm for vectors.
+
+### Dot Product in NumPy
+
+```python
+np.dot(a, b) # sum(a[i] * b[i])
+```
+
+---
+
+## 3. Pandas Quick Reference
+
+### Row-wise Normalization
+
+```python
+df.apply(lambda row: row / np.linalg.norm(row), axis=1)
+```
+
+- Normalizes each row vector to unit length.
+- Use `apply(axis=1)` for row-wise custom operations.
+
+---
+
+## 4. Key Machine Learning Concepts
 
 ### Cosine Similarity
 
-- **Reuse dot & norms**  
-  ```python
-  cos_sim(a, b) = (a·b) / (‖a‖ ‖b‖)
-  ```
-- **Role**  
-  Measure similarity of embeddings.
+- Measures vector similarity independent of magnitude (length).
+- Range: [-1, 1]
 
-### Regularisation
+```python
+cos_sim(a, b) = (a·b) / (||a|| ||b||)
+```
 
-- **L1 (Lasso)**  
+### Regularization (L1 vs L2)
+
+- **L1 (Lasso)**: Penalty encourages sparse solutions.
   \[
-    \|w\|_1 = \sum |w_i|
+  	ext{Penalty}_{L1} = \lambda \|w\|_1 = \lambda \sum_i |w_i|
   \]
-- **L2 (Ridge)**  
+
+- **L2 (Ridge)**: Penalty shrinks weights without forcing sparsity.
   \[
-    \|w\|_2^2 = \sum w_i^2
+  	ext{Penalty}_{L2} = \lambda \|w\|_2^2 = \lambda \sum_i w_i^2
   \]
+
+- Controls model complexity, prevents overfitting.
 
 ---
 
-> **Keep appending** new Q&As under relevant sub‑headings.  
-> **Tip:** Use GitHub’s markdown preview and **Ctrl + F** to navigate quickly.
+## Derivation & Understanding Tips
 
-*End of cheatsheet—your living ML reference.*  
-```
+- **Projection derivation**: Use orthogonality condition (residual · v = 0).
+- **Dot product derivation**: Align vectors head to tail; dot is projection length times magnitude.
+- **Norm understanding**: Derived from geometry; distance definitions (Euclidean, Manhattan).
+
+---
+
+*End of cheatsheet — your structured ML reference.*
