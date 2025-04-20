@@ -23,28 +23,19 @@
 
 ### Vector Magnitude (Norms)
 
-- **L₂ (Euclidean)**:
-  \[
-  \|v\|_2 = \sqrt{\sum_i v_i^2}
-  \]
+-  **L₂ (Euclidean)**: `√(sum(vᵢ²))`
   - Distance from the origin to vector’s tip.
   - Preferred norm in Euclidean contexts (like K-means).
 
-- **L₁ (Manhattan)**:
-  \[
-  \|v\|_1 = \sum_i |v_i|
-  \]
+- **L₁ (Manhattan)**: `sum(|vᵢ|)`
   - Sum of absolute vector components.
 
-- **L₃ Norm**:
-  \[
-  \|v\|_3 = \left(\sum_i |v_i|^3
-ight)^{1/3}
-  \]
+- **L₃ Norm**: `(sum(|vᵢ|³))^(1/3)`
+
 
 ### Unit Vectors
 
-- Vector of length 1 in the direction of original vector \( v \):
+- Vector of length 1 in the direction of original vector \( v \): 
   ```python
   v_hat = v / np.linalg.norm(v)
   ```
@@ -91,6 +82,27 @@ ight)^{1/3}
 - **Distances in projection**:
   - Along-vector distance (scalar proj length): `||proj_v(u)||`.
   - Perpendicular distance (residual length): `||u - proj_v(u)||`.
+  
+### Dot vs. Projection
+
+- **Dot Product** (`a·b`):  
+  - Scalar = ‖a‖‖b‖ cos θ = ∑ aᵢ bᵢ  
+  - Symmetric: `np.dot(a,b) == np.dot(b,a)`  
+  - Use when you need a single alignment or weighted‑sum score.
+
+- **Scalar Projection** (`comp_b(a)`):  
+  - Scalar = `(a·b)/‖b‖` = ‖a‖ cos θ  
+  - Asymmetric: measures “how far” a lands along b.  
+  - `scalar_proj = dot_uv / np.linalg.norm(v)`
+
+- **Vector Projection** (`proj_b(a)`):  
+  - Vector = `scalar_proj * (b/‖b‖)` = `(a·b)/(b·b) * b`  
+  - Component of a in b’s direction; used for decompositions.
+
+**Q & A**  
+- **Q:** When should I use dot vs. projection?  
+  **A:** Use **dot** for symmetric similarity or weighted sums; use **projection** when you need to split a vector into “along‑b” vs “perpendicular” parts (e.g. PCA, Gram–Schmidt, residual analysis).
+
 
 ### Vector Addition
 
